@@ -14,12 +14,14 @@ private int _closestToyId;
 private int _lostPlayer;
 private int _restTrapsNum;
 
-PImage img; 
+PImage img, angry_img, sleep_img; 
 
 void setup() {
   _freight = loadFont("FreightDispProBlack-Regular-60.vlw"); 
   size(1024, 878);
-  img = loadImage("bone.png");
+  img = loadImage("Firefly.png");
+  angry_img = loadImage("BearAngry.png");
+  sleep_img = loadImage("BearSleep.png");
 }
 void draw() {
   DisplayUI();
@@ -41,8 +43,8 @@ void keyPressed()
     // choosing how many players will join the game
     case 1:
       if(_playerNum < _MAX_PLAYER_NUM && (keyCode == RIGHT || keyCode == UP)) _playerNum++;
-      if(_playerNum > 2 && (keyCode == LEFT || keyCode == DOWN)) _playerNum--;
-      if(_playerNum > 2 && (keyCode == RETURN || keyCode == ENTER))
+      if(_playerNum > 1 && (keyCode == LEFT || keyCode == DOWN)) _playerNum--;
+      if(_playerNum > 1 && (keyCode == RETURN || keyCode == ENTER))
       {
         _players = new Player[_playerNum];
         for(int i = 0; i < _players.length; i++) _players[i] = new Player(i);
@@ -55,8 +57,8 @@ void keyPressed()
     // choosing how many traps will be set
     case 2:
       if(_trapNum < _playerNum-1 && (keyCode == RIGHT || keyCode == UP)) _trapNum++;
-      if(_trapNum > 1 && (keyCode == LEFT || keyCode == DOWN)) _trapNum--;
-      if(_trapNum > 1 && (keyCode == RETURN || keyCode == ENTER))
+      if(_trapNum > 0 && (keyCode == LEFT || keyCode == DOWN)) _trapNum--;
+      if(_trapNum > 0 && (keyCode == RETURN || keyCode == ENTER))
       {
         _restTrapsNum = _trapNum;
         MakeTraps();
@@ -114,12 +116,14 @@ private void DisplayUI()
       break;
       
     case 3:
+    image(sleep_img, 0, 0, width, height);
       DisplayToys();
       textSize(40);
-      text ("Player "+(_turn+1)+", Pick up " + _pickUpNum + " more toys!", width/2, height-100);
+      text ("Player "+(_turn+1)+", Catch " + _pickUpNum + " fireflies!", width/2, height-100);
       break;
       
     case 4:
+      image(angry_img, 0, 0, width, height);
       textSize(50);
       text ("Player " + (_lostPlayer +1) + " Lost!", width/2, height/2-60);
       
@@ -146,7 +150,12 @@ private void SetToyPositions()
 
 private void DisplayToys()
 {
-  for(Toy toy : _toys) if(!toy.hasBeenTaken) image(img, toy.x, toy.y, 20, 20);
+  textSize(20);
+  for(Toy toy : _toys) if(!toy.hasBeenTaken)
+{ 
+  image(img, toy.x, toy.y, 20, 20);
+  text (""+toy.id, toy.x+25, toy.y+25);
+}
 }
 
 private void SetUpToys()
